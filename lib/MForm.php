@@ -204,26 +204,25 @@ class MForm extends \MForm
         $this->addDefaultTextField($id);
     }
 
-    public function addDefaultLinkField(string $id = '1', string $fieldName = '', array $linkOptions = [], string $label = ''): void
+    public function addDefaultLinkField(string $id = '1', string $fieldName = '', array $linkOptions = [], string $label = '', string $class = ''): void
     {
         $field = $fieldName && $fieldName !== 'link' ? "link_$fieldName" : 'link';
         $this->addCustomLinkField(
             "$id.$field",
             array_merge([
                 'label' => rex_i18n::msg("label.module.global.$field"),
-                'class' => '',
                 'data-intern' => 'enable',
                 'data-extern' => 'enable',
                 'data-media' => 'disabled',
                 'data-mailto' => 'enable',
                 'data-tel' => 'enable',
-            ], $linkOptions)
+            ], $linkOptions, ['class' => $class])
         );
         $this->addTextField(
             "$id.text_$field",
             [
                 'label' => $label ?: rex_i18n::msg("label.module.global.text_$field"),
-                'class' => '',
+                'class' => $class,
             ]
         );
     }
@@ -277,6 +276,50 @@ class MForm extends \MForm
                 'class' => 'rex-js-code',
                 'rows' => 5,
             ]
+        );
+    }
+
+
+    /** Shopware Elements */
+
+    public function addShopwareLinkField(string $id = '1', string $fieldName = '', array $linkOptions = [], string $label = '', string $class = ''): void
+    {
+        $this->addDefaultLinkField($id, $fieldName, array_merge($linkOptions, [
+            'data-shopware' => 'enable'
+        ]), $label, $class);
+    }
+    public function addShopwareCategorySelector(string $id = '1', string $fieldName = 'product_category_id', array $options = []): void
+    {
+        $categoryApi = new \Kreatif\kShopware\StoreApi\CategoryApi();
+        $response    = $categoryApi->fetchCategoryList();
+        $categories  = [];
+        foreach ($response->elements as $category) {
+            $categories[$category->id] = $category->name;
+        }
+        $this->addSelectField(
+            "$id.$fieldName",
+            $categories,
+            array_merge([
+                'label' => rex_i18n::msg("label.module.global.$fieldName"),
+            ], $options)
+        );
+    }
+    public function addShopwareProductSelector(string $id = '1', string $fieldName = 'product_id', array $options =[]): void
+    {
+        //Fetch Products
+        $productApi = new \Kreatif\kShopware\StoreApi\ProductApi();
+        $response   = $productApi->fetchProductList();
+        $products   = [];
+        foreach ($response->elements as $product) {
+            $products[$product->id] = $product->translated->name;
+        }
+        //UI
+        $this->addSelectField(
+            "$id.$fieldName",
+            $products,
+            array_merge([
+                'label' => rex_i18n::msg("label.module.global.$fieldName"),
+            ], $options)
         );
     }
 }
