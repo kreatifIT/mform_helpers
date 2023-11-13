@@ -3,6 +3,7 @@
 namespace MFormHelpers;
 
 use Cke5\Utils\Cke5Lang;
+use Kreatif\Api;
 use rex_article;
 use rex_i18n;
 
@@ -304,22 +305,24 @@ class MForm extends \MForm
             ], $options)
         );
     }
-    public function addShopwareProductSelector(string $id = '1', string $fieldName = 'product_id', array $options =[]): void
+
+    public function addShopwareProductSelector(string $id = '1', string $fieldName = 'product_id', array $options = [], $class): void
     {
-        //Fetch Products
-        $productApi = new \Kreatif\kShopware\StoreApi\ProductApi();
-        $response   = $productApi->fetchProductList();
-        $products   = [];
-        foreach ($response->elements as $product) {
-            $products[$product->id] = $product->translated->name;
-        }
-        //UI
-        $this->addSelectField(
-            "$id.$fieldName",
-            $products,
-            array_merge([
-                'label' => rex_i18n::msg("label.module.global.$fieldName"),
-            ], $options)
-        );
+        $apiUrlProducts       = Api::getUrl(\rex_api_kreatif_shopware_products::class, 'getList', ['lang_id' => \rex_clang::getCurrentId()]);
+        $select2ParamsProduct = [
+            'ajax' => [
+                'url'                => $apiUrlProducts,
+                'dataType'           => 'json',
+                'delay'              => 1000,
+                'minimumInputLength' => 3,
+            ],
+        ];
+
+        $this->addSelectField("$id.$fieldName", $options, [
+            'label'            => 'Produkte',
+            'class'            => 'form-control sw_search_api w-100 ' . $class,
+            'data-params'      => rex_escape(json_encode($select2ParamsProduct), 'html_attr'),
+            'data-live-search' => true,
+        ]);
     }
 }
