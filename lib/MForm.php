@@ -3,16 +3,17 @@
 namespace MFormHelpers;
 
 use Cke5\Utils\Cke5Lang;
-use Kreatif\Api;
-use MForm\Handler\MFormValueHandler;
+use MForm\MFormElements;
 use rex_article;
+use rex_clang;
 use rex_i18n;
+use rex_url;
 
 
 class MForm extends \MForm
 {
     const SETTINGS_VALUE_ID = 20;
-    const ANCHOR_VALUE_ID   = 10;
+    const ANCHOR_VALUE_ID = 10;
 
     protected bool $firstTab = true;
 
@@ -42,7 +43,7 @@ class MForm extends \MForm
                 </div>'
             );
         } else {
-            $article   = rex_article::getCurrent();
+            $article = rex_article::getCurrent();
             $anchorUrl = $article->getUrl() . '#section-' . rex_get('slice_id', 'int');
             $mform->addHtml(
                 '<div class="form-group">
@@ -72,7 +73,7 @@ class MForm extends \MForm
                 </div>'
             );
         } else {
-            $article   = rex_article::getCurrent();
+            $article = rex_article::getCurrent();
             $anchorUrl = $article->getUrl() . '#section-' . rex_get('slice_id', 'int');
             $this->addHtml(
                 '<div class="form-group">
@@ -87,9 +88,9 @@ class MForm extends \MForm
     public function addTitleField(string $id = '1', string $fieldName = 'title', string $class = ''): void
     {
         $this->addTextAreaField("$id.$fieldName", [
-            'label'        => rex_i18n::msg("label.module.global.$fieldName"),
-            'class'        => "cke5-editor $class",
-            'data-lang'    => Cke5Lang::getUserLang(),
+            'label' => rex_i18n::msg("label.module.global.$fieldName"),
+            'class' => "cke5-editor $class",
+            'data-lang' => Cke5Lang::getUserLang(),
             'data-profile' => 'headline',
         ]);
     }
@@ -97,18 +98,18 @@ class MForm extends \MForm
     public function addImageField(int $id = 1, string $fieldName = 'image'): void
     {
         $this->addMediaField($id, [
-            'label'   => rex_i18n::msg("label.module.global.$fieldName"),
+            'label' => rex_i18n::msg("label.module.global.$fieldName"),
             'preview' => 1,
-            'types'   => 'png,svg,jpg,jpeg,gif,webp',
+            'types' => 'png,svg,jpg,jpeg,gif,webp',
         ]);
     }
 
     public function addImagesField(int $id = 1, string $fieldName = 'images'): void
     {
         $this->addMedialistField($id, [
-            'label'   => rex_i18n::msg("label.module.global.$fieldName"),
+            'label' => rex_i18n::msg("label.module.global.$fieldName"),
             'preview' => 1,
-            'types'   => 'png,svg,jpg,jpeg,gif,webp',
+            'types' => 'png,svg,jpg,jpeg,gif,webp',
         ]);
     }
 
@@ -147,9 +148,9 @@ class MForm extends \MForm
     public function addDefaultTextField(string $id = '1', string $fieldName = 'text', string $class = ''): void
     {
         $this->addTextAreaField("$id.$fieldName", [
-            'label'        => rex_i18n::msg("label.module.global.$fieldName"),
-            'class'        => "cke5-editor $class",
-            'data-lang'    => Cke5Lang::getUserLang(),
+            'label' => rex_i18n::msg("label.module.global.$fieldName"),
+            'class' => "cke5-editor $class",
+            'data-lang' => Cke5Lang::getUserLang(),
             'data-profile' => 'default',
         ]);
     }
@@ -176,18 +177,18 @@ class MForm extends \MForm
     {
         $options = array_merge(
             [
-                'id'         => '2',
+                'id' => '2',
                 'item_label' => 'block',
-                'tab_label'  => 'blocks',
+                'tab_label' => 'blocks',
             ],
             $options
         );
-        $id      = $options['id'];
+        $id = $options['id'];
 
         $this->addTab(function (MForm $tab) use ($cb, $id, $options) {
             $itemLabel = $options['item_label'];
-            $mform     = static::factory();
-            $fieldset  = static::factory();
+            $mform = static::factory();
+            $fieldset = static::factory();
             $cb($fieldset, $id . '.0');
             $mform->addFieldsetArea(\rex_i18n::msg("label.module.global.$itemLabel"), $fieldset);
             $tab->addHtml(\MBlock::show($id, $mform, $options));
@@ -208,17 +209,17 @@ class MForm extends \MForm
             "$id.$field",
             array_merge(
 
-                                                                                                                                                             [
-                                                                                                                                                                 'label'       => rex_i18n::msg(
-                                                                                                                                                                     "label.module.global.$field"
-                                                                                                                                                                 ),
-                                                                                                                                                                 'data-intern' => 'enable',
-                                                                                                                                                                 'data-extern' => 'enable',
-                                                                                                                                                                 'data-media'  => 'disabled',
-                                                                                                                                                                 'data-mailto' => 'enable',
-                                                                                                                                                                 'data-tel'    => 'enable',
-                                                                                                                                                             ], $linkOptions,
-                                                                                                                                                             ['class' => $class]
+                [
+                    'label' => rex_i18n::msg(
+                        "label.module.global.$field"
+                    ),
+                    'data-intern' => 'enable',
+                    'data-extern' => 'enable',
+                    'data-media' => 'disabled',
+                    'data-mailto' => 'enable',
+                    'data-tel' => 'enable',
+                ], $linkOptions,
+                ['class' => $class]
             )
         );
 
@@ -240,7 +241,7 @@ class MForm extends \MForm
         }, 'settings');
     }
 
-    public function addSelectField($id, array $options = null, array $attributes = null, int $size = 1, string $defaultValue = null): \MForm\MFormElements
+    public function addSelectField($id, array $options = null, array $attributes = null, int $size = 1, string $defaultValue = null): MFormElements
     {
         return parent::addSelectField($id, $options, array_merge(['data-live-search' => true], $attributes), $size, $defaultValue);
     }
@@ -273,7 +274,7 @@ class MForm extends \MForm
         $this->addTextAreaField("$id.$fieldName", [
             'label' => rex_i18n::msg("label.module.global.$fieldName"),
             'class' => 'rex-js-code',
-            'rows'  => 5,
+            'rows' => 5,
         ]);
     }
 
@@ -296,8 +297,8 @@ class MForm extends \MForm
     public function addShopwareCategorySelector(string $id = '1', string $fieldName = 'product_category_id', array $options = []): void
     {
         $categoryApi = new \Kreatif\kShopware\StoreApi\CategoryApi();
-        $response    = $categoryApi->fetchCategoryList();
-        $categories  = [];
+        $response = $categoryApi->fetchCategoryList();
+        $categories = [];
 
         foreach ($response->elements as $category) {
             $categories[$category->id] = $category->name;
@@ -306,25 +307,57 @@ class MForm extends \MForm
             "$id.$fieldName",
             $categories,
             array_merge([
-                            'label' => rex_i18n::msg("label.module.global.$fieldName"),
-                        ], $options)
+                'label' => rex_i18n::msg("label.module.global.$fieldName"),
+            ], $options)
         );
     }
 
     public function addShopwareProductSelector(string $id = '1', string $fieldName = 'product_id', array $class = []): void
     {
         //Fetch Products
-        $productApi = new \Kreatif\kShopware\StoreApi\ProductApi(); 
-        $response   = $productApi->fetchProductList();
-        $products   = [];
+        $productApi = new \Kreatif\kShopware\StoreApi\ProductApi();
+        $response = $productApi->fetchProductList();
+        $products = [];
         foreach ($response->elements as $product) {
             $products[$product->id] = $product->translated->name;
         }
 
         $this->addSelectField("$id.$fieldName", $products, [
-            'label'            => 'Produkte',
-            'class'            => 'form-control sw_search_api w-100 ' . implode(' ', $class),
+            'label' => 'Produkte',
+            'class' => 'form-control sw_search_api w-100 ' . implode(' ', $class),
             'data-live-search' => true,
         ]);
     }
+
+    public function addCustomLinkField($id, array $attributes = null, string $defaultValue = null): MFormElements
+    {
+        $field = parent::addCustomLinkField($id, $attributes, $defaultValue);
+        if ($attributes['data-anchors'] === 'enable') {
+            $this->addCustomLinkAnchorField($id);
+        }
+        return $field;
+    }
+
+    /**
+     * @param float|int|string $id
+     * @return void
+     */
+    private function addCustomLinkAnchorField(float|int|string $id): void
+    {
+        $backendUrl = rex_url::backendController([
+            'page' => 'content/edit',
+            'clang' => rex_clang::getCurrentId(),
+            'function' => 'edit',
+        ]);
+        $this->addHtml('<div class="kreatif-anchor" data-kreatif-anchor>');
+        $this->addTextField($id . "_anchor", [
+            'label' => rex_i18n::msg("label.module.global.link_anchor"),
+            'attributes' => [
+                'data-kreatif-anchor-input' => ''
+            ],
+        ]);
+        $this->addHtml('<a href="#" class="kreatif-anchor-btn" target="_blank" data-base-url="' . $backendUrl . '" data-kreatif-anchor-link><i class="rex-icon rex-icon-view-media"></i> Anker-Vorschau</a>');
+        $this->addHtml('</div>');
+    }
+
 }
