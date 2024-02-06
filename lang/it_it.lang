@@ -98,3 +98,5 @@ label.module_name.text = C - Text
 label.module_name.text_with_media = C - Text mit Bild oder Video
 label.module_name.title_text_media = C - Titel / Text / Bilder / Video
 label.module_name.youtube = C - YouTube Video
+label.mform_anchor_preview = al modulo collegato
+label.module_split_or = oppure
