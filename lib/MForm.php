@@ -329,11 +329,12 @@ class MForm extends \MForm
         ]);
     }
 
-    public function addCustomLinkField($id, array $attributes = null, string $defaultValue = null): MFormElements
+    public function addCustomLinkField($id, array $attributes = null, string $defaultValue = null, string $class = ''): MFormElements
     {
+        $attributes['class'] .= $class;
         $field = parent::addCustomLinkField($id, $attributes, $defaultValue);
         if ($attributes['data-anchors'] === 'enable') {
-            $this->addCustomLinkAnchorField($id);
+            $this->addCustomLinkAnchorField($id, $class);
         }
         return $field;
     }
@@ -342,7 +343,7 @@ class MForm extends \MForm
      * @param float|int|string $id
      * @return void
      */
-    private function addCustomLinkAnchorField(float|int|string $id): void
+    private function addCustomLinkAnchorField(float|int|string $id, string $class): void
     {
         $backendUrl = rex_url::backendController([
             'page' => 'content/edit',
@@ -352,8 +353,9 @@ class MForm extends \MForm
         $this->addHtml('<div class="kreatif-anchor" data-kreatif-anchor>');
         $this->addTextField($id . "_anchor", [
             'label' => rex_i18n::msg('label.module_split_or') . ' ' . rex_i18n::msg("label.module.global.link_anchor"),
+            'class' => $class,
             'attributes' => [
-                'data-kreatif-anchor-input' => ''
+                'data-kreatif-anchor-input' => '',
             ],
         ]);
         $this->addHtml('<a href="#" class="btn btn-popup kreatif-anchor-btn" target="_blank" data-base-url="' . $backendUrl . '" data-kreatif-anchor-link><i class="rex-icon rex-icon-view-media"></i>&nbsp;&nbsp;' . rex_i18n::msg('label.mform_anchor_preview') . '</a>');
